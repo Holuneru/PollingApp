@@ -16,8 +16,11 @@ public class UserController {
 
     @GetMapping(path = "/{id}/polls")
     public UserPollListDto getUserPollList(@PathVariable Long id) {
+
         return userService.getUserPollList(id);
     }
+
+
 
     @PostMapping(path = "/register")
     public UserResponseDto registerUser(@RequestBody @Valid UserRequestDto userRequestDto) {

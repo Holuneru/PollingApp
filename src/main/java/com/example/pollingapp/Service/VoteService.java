@@ -1,5 +1,7 @@
 package com.example.pollingapp.Service;
 
+import com.example.pollingapp.DTO.VoteDto.Response.GetInfo.SimpleVoteDto;
+import com.example.pollingapp.DTO.VoteDto.Response.GetInfo.UserVoteListDto;
 import com.example.pollingapp.Entity.Option;
 import com.example.pollingapp.Entity.PollEntity.Poll;
 import com.example.pollingapp.Entity.PollEntity.PollStatus;
@@ -12,6 +14,8 @@ import com.example.pollingapp.Repository.VoteRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -64,4 +68,24 @@ public class VoteService {
         voteRepository.delete(vote);
         log.info("User {} canceled vote for option {} in poll {}", userId, optionId, vote.getPoll().getId());
     }
+
+    public UserVoteListDto getUserVoteList(Long userId){
+        User user = userRepository.findWithVoteListAndPollList(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        UserVoteListDto userVoteListDto = new UserVoteListDto();
+        userVoteListDto.setUsername(user.getUsername());
+
+        List<SimpleVoteDto> votes = user.getVotes().stream()
+                .map(vote -> new SimpleVoteDto(
+                        vote.getPoll().getQuestion(),
+                        vote.getOption().getText()
+                )
+                ).toList();
+        
+        userVoteListDto.setVotes(votes);
+        return userVoteListDto;
+    }
+
+
 }

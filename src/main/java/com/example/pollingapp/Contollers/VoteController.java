@@ -1,5 +1,6 @@
 package com.example.pollingapp.Contollers;
 
+import com.example.pollingapp.DTO.VoteDto.Response.GetInfo.UserVoteListDto;
 import com.example.pollingapp.Service.VoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,12 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class VoteController {
     private final VoteService voteService;
+
+
+    @GetMapping(path = "/user/{userId}/list")
+    public UserVoteListDto getUserVoteList(@PathVariable Long userId){
+        return voteService.getUserVoteList(userId);
+    }
 
     @PostMapping(path = "/create")
     public ResponseEntity<String> createVote(@RequestParam Long userId, @RequestParam Long optionId) {

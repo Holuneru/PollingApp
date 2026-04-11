@@ -40,7 +40,6 @@ public class UserService {
         List<SimplePollList> polls = user.getPolls()
                 .stream().map(p -> new SimplePollList(p.getId(), p.getQuestion()))
                 .toList();
-
         userPollListDto.setPolls(polls);
         return userPollListDto;
 
