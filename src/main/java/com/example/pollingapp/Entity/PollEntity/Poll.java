@@ -1,4 +1,5 @@
 package com.example.pollingapp.Entity.PollEntity;
+import com.example.pollingapp.Entity.Option;
 import com.example.pollingapp.Entity.User;
 import com.example.pollingapp.Entity.Vote;
 import jakarta.persistence.*;
@@ -39,6 +40,10 @@ public class Poll {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private PollStatus status;
+
+    @OneToMany(mappedBy = "poll", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Option> options = new ArrayList<>();
+
 
     @OneToMany(mappedBy = "poll", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Vote> votes = new ArrayList<>();
