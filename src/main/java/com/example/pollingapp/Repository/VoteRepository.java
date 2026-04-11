@@ -13,4 +13,17 @@ public interface VoteRepository extends JpaRepository<Vote, Long> {
 
     @Query("SELECT v FROM Vote v WHERE v.user.id = :userId AND v.option.id = :optionId")
     Optional<Vote> checkOnVoteDouble(@Param("userId") Long userId, @Param("optionId") Long optionId);
+
+
+    /*TODO
+    Добавь функцию подсчета голосов, чтобы выдавать их количество у конкретного Option (варианта ответа)
+    После длбавь сумму всех голосов у конкретного Poll (опроса)
+
+
+        @Query("SELECT COUNT(v) FROM Vote v WHERE v.option.id = :optionId")
+        Long countVotesByOptionId(@Param("optionId") Long optionId);
+
+        @Query("SELECT COUNT(v) FROM Vote v WHERE v.poll.id = :pollId")
+        Long countVotesByPollId(@Param("pollId") Long pollId);
+     */
 }
