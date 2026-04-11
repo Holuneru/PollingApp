@@ -5,10 +5,8 @@ import com.example.pollingapp.DTO.PollDto.Response.PollResponse;
 import com.example.pollingapp.Service.PollService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "api/polls")
@@ -20,4 +18,11 @@ public class PollController {
     public PollResponse createPoll(@RequestBody @Valid PollRequest pollRequest) {
         return pollService.createPoll(pollRequest);
     }
+
+    @PutMapping(path = "/close/poll/{pollId}/owner/{ownerId}")
+    public ResponseEntity<String> closePoll(@PathVariable Long pollId, @PathVariable Long ownerId){
+        pollService.closePoll(pollId, ownerId);
+        return ResponseEntity.ok("Poll closed successfully");
+    }
+
 }

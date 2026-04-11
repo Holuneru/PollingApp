@@ -45,6 +45,11 @@ public class OptionService {
                 .orElseThrow(
                         () -> new RuntimeException("Poll not found with ID: " + pollId)
                 );
+
+        if (poll.getStatus().equals(PollStatus.CLOSED)){
+            throw new RuntimeException("Poll is closed");
+        }
+
         return poll.getOptions().stream()
                 .map(optionMapper::toResponse)
                 .toList();

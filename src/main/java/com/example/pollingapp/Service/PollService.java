@@ -11,6 +11,7 @@ import com.example.pollingapp.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -41,5 +42,24 @@ public class PollService {
 
 
     }
+
+    @Transactional
+    public void closePoll(Long pollId, Long ownerId) {
+        Poll poll = pollRepository.findWithOwner(pollId)
+                .orElseThrow(() -> new IllegalArgumentException("Poll not found"));
+        User owner = userRepository.findById(ownerId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        if (!poll.getCreatedBy().getId().equals(owner.getId())){
+            throw new IllegalArgumentException("You are not the owner of this poll");
+        }
+        if (poll.getStatus().equals(PollStatus.CLOSED)){
+            throw new IllegalArgumentException("Poll is already closed");
+        }
+        poll.setStatus(PollStatus.CLOSED);
+        pollRepository.save(poll);
+        log.info("Poll with id: {} closed successfully by user: {}", poll.getId(), owner.getUsername());
+    }
+
 
 }

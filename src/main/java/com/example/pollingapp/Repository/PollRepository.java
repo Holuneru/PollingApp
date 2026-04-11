@@ -12,4 +12,7 @@ import java.util.Optional;
 public interface PollRepository extends JpaRepository<Poll, Long> {
     @Query("SELECT p FROM Poll p LEFT JOIN FETCH p.options WHERE p.id = :pollId")
     Optional<Poll> findWithOptions(@Param("pollId") Long pollId);
+
+    @Query("SELECT p FROM Poll p LEFT JOIN FETCH p.createdBy WHERE p.id = :id")
+    Optional<Poll> findWithOwner(@Param("id") Long id);
 }
