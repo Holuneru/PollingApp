@@ -4,6 +4,7 @@ import com.example.pollingapp.DTO.OptionDto.Request.OptionRequestDto;
 import com.example.pollingapp.DTO.OptionDto.Response.OptionResponse;
 import com.example.pollingapp.Entity.Option;
 import com.example.pollingapp.Entity.PollEntity.Poll;
+import com.example.pollingapp.Entity.PollEntity.PollStatus;
 import com.example.pollingapp.Mappers.OptionMapper;
 import com.example.pollingapp.Repository.OptionRepository;
 import com.example.pollingapp.Repository.PollRepository;
@@ -28,7 +29,9 @@ public class OptionService {
                         () -> new RuntimeException("Poll not found with ID: " + optionRequestDto.getPollId())
                 );
 
-
+        if (poll.getStatus().equals(PollStatus.CLOSED)){
+            throw new RuntimeException("Poll is closed");
+        }
 
         Option option = new Option();
         option.setText(optionRequestDto.getText());
