@@ -13,11 +13,17 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
 
+    Optional<User> findByEmail(String email);
+
+
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.polls p WHERE u.id = :id")
     Optional<User> findWithPollList(@Param("id") Long id);
 
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.votes v LEFT JOIN FETCH v.poll WHERE u.id = :id")
     Optional<User> findWithVoteListAndPollList(@Param("id") Long id);
+
+    @Query("SELECT u FROM User u WHERE u.username = :username AND u.password = :password")
+    Optional<User> authenticationUser(@Param("username") String username, @Param("password") String password);
 
 
 }
