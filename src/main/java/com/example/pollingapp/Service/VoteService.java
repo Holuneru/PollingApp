@@ -47,4 +47,21 @@ public class VoteService {
         log.info("User {} voted for option {} in poll {}", userId, optionId, poll.getId());
     }
 
+    public void cancelVote(Long userId, Long optionId) {
+        Vote vote = voteRepository.checkOnVoteDouble(userId,optionId)
+                .orElseThrow(
+                        () -> new RuntimeException("User has not voted for this option in this poll.")
+                );
+        Option option = optionRepository.findWithPoll(optionId)
+                .orElseThrow(
+                        () -> new RuntimeException("Option not found")
+                );
+
+        if (option.getPoll().getStatus().equals(PollStatus.CLOSED)){
+            throw new RuntimeException("Poll is closed");
+        }
+
+        voteRepository.delete(vote);
+        log.info("User {} canceled vote for option {} in poll {}", userId, optionId, vote.getPoll().getId());
+    }
 }
