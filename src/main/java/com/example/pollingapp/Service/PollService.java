@@ -29,7 +29,7 @@ public class PollService {
 
         Poll poll = pollMapper.pollRequestToPoll(pollRequest);
         poll.setCreatedAt(LocalDateTime.now());
-        poll.setExpiresAt(LocalDateTime.now().plusDays(5));
+        poll.setExpiresAt(LocalDateTime.now().plusDays(pollRequest.getValidityPeriodDay()));
         poll.setStatus(PollStatus.ACTIVE);
         poll.setCreatedBy(user);
         Poll savedPoll = pollRepository.save(poll);

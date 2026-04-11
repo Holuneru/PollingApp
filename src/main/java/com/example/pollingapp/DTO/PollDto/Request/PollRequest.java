@@ -1,7 +1,6 @@
 package com.example.pollingapp.DTO.PollDto.Request;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +15,11 @@ public class PollRequest {
 
     @NotBlank(message = "Username cannot be empty")
     private String usernameCreator;
+
+    @NotNull
+    @Positive
+    @Max(value = 31, message = "Validity period cannot exceed 31 days")
+    private Integer validityPeriodDay;
 
 
 
