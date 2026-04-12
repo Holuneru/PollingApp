@@ -56,6 +56,21 @@ This document provides a description of all the available API endpoints for the 
     ```
   - **Response:** Returns the created user object.
 
+- **Update user information**
+  - **POST** `/api/users/updateInfo`
+  - **Description:** Updates a user's information (username, email, or password).
+  - **Request Body:**
+    ```json
+    {
+      "oldUserName": "current_username",
+      "password": "current_password",
+      "new_username": "new_username",
+      "new_email": "new_email@example.com",
+      "new_password": "new_password"
+    }
+    ```
+  - **Response:** Returns the updated user object.
+
 ## Votes API
 
 - **Get user's vote list**
@@ -64,6 +79,20 @@ This document provides a description of all the available API endpoints for the 
   - **URL Parameters:**
     - `userId`: The ID of the user.
   - **Response:** Returns a list of the user's votes.
+
+- **Get option values for a poll**
+  - **GET** `/api/votes/poll/{pollId}/options/values`
+  - **Description:** Retrieves the values of options for a specific poll.
+  - **URL Parameters:**
+    - `pollId`: The ID of the poll.
+  - **Response:** Returns a list of option values.
+
+- **Get vote count for a poll**
+  - **GET** `/api/votes/poll/{pollId}/count`
+  - **Description:** Retrieves the total number of votes for a specific poll.
+  - **URL Parameters:**
+    - `pollId`: The ID of the poll.
+  - **Response:** Returns the total vote count.
 
 - **Create a new vote**
   - **POST** `/api/votes/create`
