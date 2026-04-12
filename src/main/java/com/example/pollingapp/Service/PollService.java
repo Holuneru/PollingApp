@@ -1,5 +1,6 @@
 package com.example.pollingapp.Service;
 
+import com.example.pollingapp.DTO.PollDto.PollList.GetAllPollsWithOptionsVotesListDto;
 import com.example.pollingapp.DTO.PollDto.Request.PollRequest;
 import com.example.pollingapp.DTO.PollDto.Response.PollResponse;
 import com.example.pollingapp.Entity.PollEntity.Poll;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -59,6 +61,18 @@ public class PollService {
         poll.setStatus(PollStatus.CLOSED);
         pollRepository.save(poll);
         log.info("Poll with id: {} closed successfully by user: {}", poll.getId(), owner.getUsername());
+    }
+
+    public List<GetAllPollsWithOptionsVotesListDto> getAllPollsWithOptionsVotes() {
+        List<Poll> polls = pollRepository.findOnlyACTIVE();
+        return polls.stream().map(poll -> {
+            GetAllPollsWithOptionsVotesListDto dto = new GetAllPollsWithOptionsVotesListDto();
+            dto.setPollName(poll.getQuestion());
+            poll.getOptions().forEach(option -> {
+                dto.getOptions().add(new com.example.pollingapp.DTO.VoteDto.Response.GetInfo.GetOptionVotesWithValues.GetOptionVotesWithValuesListDto(option.getText(), (long) option.getVotes().size()));
+            });
+            return dto;
+        }).toList();
     }
 
 
