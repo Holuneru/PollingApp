@@ -11,8 +11,26 @@ This document provides a description of all the available API endpoints for the 
 - **Lombok**
 - **MapStruct**
 - **Springdoc OpenAPI (Swagger)**
+- **Docker**
+
+## Running with Docker
+
+To run the application and a PostgreSQL database using Docker, you can use the provided `docker-compose.yml` file.
+
+From the root of the project, run the following command:
+
+```sh
+docker-compose up --build
+```
+
+The application will be available at `http://localhost:8080`.
 
 ## Polls API
+
+- **Get all polls with options and votes**
+  - **GET** `/api/polls/all`
+  - **Description:** Retrieves a list of all polls, including their options and vote counts.
+  - **Response:** Returns a list of all polls.
 
 - **Create a new poll**
   - **POST** `/api/polls/create`
