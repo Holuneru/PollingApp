@@ -15,6 +15,7 @@ services:
 
   app:
     build: .
+    image: holuneru/polling-app:latest
     container_name: polling-app
     depends_on:
       - postgres
