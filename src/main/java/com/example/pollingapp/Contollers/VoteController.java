@@ -1,5 +1,6 @@
 package com.example.pollingapp.Contollers;
 
+import com.example.pollingapp.DTO.VoteDto.Response.GetInfo.GetOptionVotesWithValues.PollVotesWithValueDto;
 import com.example.pollingapp.DTO.VoteDto.Response.GetInfo.UserVoteListDto;
 import com.example.pollingapp.Service.VoteService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,13 @@ public class VoteController {
     public UserVoteListDto getUserVoteList(@PathVariable Long userId){
         return voteService.getUserVoteList(userId);
     }
+
+
+    @GetMapping(path = "/poll/{pollId}/options/values")
+    public PollVotesWithValueDto getOptionsValuesByPoll(@PathVariable Long pollId){
+        return voteService.getValueOptionsByPoll(pollId);
+    }
+
 
     @PostMapping(path = "/create")
     public ResponseEntity<String> createVote(@RequestParam Long userId, @RequestParam Long optionId) {
