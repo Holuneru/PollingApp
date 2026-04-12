@@ -2,6 +2,7 @@ package com.example.pollingapp.Service;
 
 import com.example.pollingapp.DTO.VoteDto.Response.GetInfo.GetOptionVotesWithValues.GetOptionVotesWithValuesListDto;
 import com.example.pollingapp.DTO.VoteDto.Response.GetInfo.GetOptionVotesWithValues.PollVotesWithValueDto;
+import com.example.pollingapp.DTO.VoteDto.Response.GetInfo.GetSumVotesInPoll.SumVotesInPollDto;
 import com.example.pollingapp.DTO.VoteDto.Response.GetInfo.SimpleVoteDto;
 import com.example.pollingapp.DTO.VoteDto.Response.GetInfo.UserVoteListDto;
 import com.example.pollingapp.Entity.Option;
@@ -105,6 +106,18 @@ public class VoteService {
         pollVotesWithValueDto.setOptionVotesWithValuesList(optionVotesWithValuesList);
         return pollVotesWithValueDto;
 
+    }
+
+
+    public SumVotesInPollDto getVotestCountByPoll(Long pollId){
+        Poll poll = pollRepository.findById(pollId)
+                .orElseThrow(() -> new RuntimeException("Poll not found"));
+
+        SumVotesInPollDto sumVotesInPollDto = new SumVotesInPollDto();
+        sumVotesInPollDto.setPollName(poll.getQuestion());
+        sumVotesInPollDto.setVotesSum(voteRepository.countVotesByPollId(pollId));
+
+        return sumVotesInPollDto;
     }
 
 

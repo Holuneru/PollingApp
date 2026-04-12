@@ -1,6 +1,7 @@
 package com.example.pollingapp.Contollers;
 
 import com.example.pollingapp.DTO.VoteDto.Response.GetInfo.GetOptionVotesWithValues.PollVotesWithValueDto;
+import com.example.pollingapp.DTO.VoteDto.Response.GetInfo.GetSumVotesInPoll.SumVotesInPollDto;
 import com.example.pollingapp.DTO.VoteDto.Response.GetInfo.UserVoteListDto;
 import com.example.pollingapp.Service.VoteService;
 import lombok.RequiredArgsConstructor;
@@ -38,5 +39,12 @@ public class VoteController {
         voteService.cancelVote(userId,optionId);
         return ResponseEntity.ok("Vote canceled successfully");
     }
+
+
+    @GetMapping(path = "/poll/{pollId}/count")
+    public SumVotesInPollDto getVoteCountByPoll(@PathVariable Long pollId){
+        return voteService.getVotestCountByPoll(pollId);
+    }
+
 
 }
