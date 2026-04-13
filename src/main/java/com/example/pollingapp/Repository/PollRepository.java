@@ -17,6 +17,6 @@ public interface PollRepository extends JpaRepository<Poll, Long> {
     @Query("SELECT p FROM Poll p LEFT JOIN FETCH p.createdBy WHERE p.id = :id")
     Optional<Poll> findWithOwner(@Param("id") Long id);
 
-    @Query("SELECT p FROM Poll p WHERE p.status = 'ACTIVE'")
+    @Query("SELECT p FROM Poll p LEFT JOIN FETCH p.options WHERE p.status = 'ACTIVE'")
     List<Poll> findOnlyACTIVE();
 }
