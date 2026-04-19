@@ -1,6 +1,7 @@
 package com.example.pollingapp.Mappers;
 
 import com.example.pollingapp.DTO.UserDto.Request.UserRequestDto;
+import com.example.pollingapp.DTO.UserDto.Request.UsersList;
 import com.example.pollingapp.DTO.UserDto.Response.UserResponseDto;
 import com.example.pollingapp.Entity.User;
 import org.mapstruct.Mapper;
@@ -15,5 +16,7 @@ public interface UserMapper {
 
     //User to UserResponseDto
     UserResponseDto userToUserResponseDto(User user);
+
+    UsersList userToUsersList(User user);
 
 }

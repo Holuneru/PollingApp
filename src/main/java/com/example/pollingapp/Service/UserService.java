@@ -1,6 +1,7 @@
 package com.example.pollingapp.Service;
 
 import com.example.pollingapp.DTO.UserDto.Request.UserRequestDto;
+import com.example.pollingapp.DTO.UserDto.Request.UsersList;
 import com.example.pollingapp.DTO.UserDto.Response.GetInfo.SimplePollList;
 import com.example.pollingapp.DTO.UserDto.Response.GetInfo.UserPollListDto;
 import com.example.pollingapp.DTO.UserDto.Response.UserResponseDto;
@@ -11,6 +12,7 @@ import com.example.pollingapp.Mappers.UserMapper;
 import com.example.pollingapp.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,11 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
+    public ResponseEntity<List<UsersList>> getAllUsersLogin(){
+        List<User> users = userRepository.findAll();
+        List<UsersList> usersList = users.stream().map(userMapper::userToUsersList).toList();
+        return ResponseEntity.ok(usersList);
+    }
 
     public UserResponseDto registrationUser(UserRequestDto userRequestDto){
         User user = userMapper.userRequestDtoToUser(userRequestDto);

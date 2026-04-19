@@ -24,10 +24,12 @@ public class OptionService {
 
     public void addOption(OptionRequestDto optionRequestDto){
 
-        Poll poll = pollRepository.findById(optionRequestDto.getPollId())
+        Poll poll = pollRepository.findWithOptions(optionRequestDto.getPollId())
                 .orElseThrow(
                         () -> new RuntimeException("Poll not found with ID: " + optionRequestDto.getPollId())
                 );
+
+
 
         if (poll.getStatus().equals(PollStatus.CLOSED)){
             throw new RuntimeException("Poll is closed");
