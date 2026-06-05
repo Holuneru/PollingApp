@@ -1,150 +1,104 @@
-# Polling App API
+# 📊 Polling App
 
-This document provides a description of all the available API endpoints for the Polling App.
+Система для создания опросов и сбора голосов. Пользователи могут регистрироваться, создавать опросы с вариантами ответов, голосовать (один раз на опрос) и просматривать результаты в реальном времени. Проект написан на **Spring Boot** с использованием **JPA/Hibernate**, **PostgreSQL**, **Spring Security**, **JWT** и **Swagger**.
 
-## Technology Stack
+---
 
-- **Java 21**
-- **Spring Boot**
-- **Spring Data JPA**
-- **PostgreSQL**
-- **Lombok**
-- **MapStruct**
-- **Springdoc OpenAPI (Swagger)**
-- **Docker**
+## 🧠 Бизнес-логика
 
-## Running with Docker
+- **Пользователь** регистрируется, авторизуется (JWT токен).
+- Создаёт **опрос**: вопрос, список вариантов ответов, срок действия (в днях).
+- Пользователи могут **голосовать** за один из вариантов.
+- **Ограничение**: один пользователь может проголосовать только один раз в конкретном опросе.
+- **Просмотр результатов**: для каждого опроса отображается количество голосов за каждый вариант и проценты.
+- **Закрытие опроса**: автоматически по истечении срока или вручную владельцем опроса.
 
-To run the application and a PostgreSQL database using Docker, you can use the provided `docker-compose.yml` file.
+---
 
-From the root of the project, run the following command:
+## 🛠️ Технологический стек
 
-```sh
-docker-compose up --build
-```
+| Компонент | Технология |
+|-----------|-------------|
+| **Язык** | Java 17 |
+| **Фреймворк** | Spring Boot 4.0.5 |
+| **Безопасность** | Spring Security + JWT |
+| **ORM** | Hibernate (JPA) |
+| **База данных** | PostgreSQL |
+| **Маппинг DTO** | MapStruct |
+| **Документация API** | SpringDoc OpenAPI (Swagger) |
+| **Сборка** | Maven |
 
-The application will be available at `http://localhost:8080`.
+---
 
-## Polls API
+## 📦 Структура проекта (основные пакеты)
 
-- **Get all polls with options and votes**
-  - **GET** `/api/polls/all`
-  - **Description:** Retrieves a list of all polls, including their options and vote counts.
-  - **Response:** Returns a list of all polls.
+---
 
-- **Create a new poll**
-  - **POST** `/api/polls/create`
-  - **Description:** Creates a new poll.
-  - **Request Body:**
-    ```json
-    {
-      "question": "Your poll question",
-      "usernameCreator": "your_username"
-    }
-    ```
-  - **Response:** Returns the created poll object.
+## 🚀 Основные API эндпоинты
 
-- **Close a poll**
-  - **PUT** `/api/polls/close/poll/{pollId}/owner/{ownerId}`
-  - **Description:** Closes an existing poll. Only the owner of the poll can close it.
-  - **URL Parameters:**
-    - `pollId`: The ID of the poll to close.
-    - `ownerId`: The ID of the poll owner.
-  - **Response:** Returns a success message.
+### Пользователи
+| Метод | Эндпоинт | Описание |
+|-------|----------|-----------|
+| POST | `/api/users/register` | Регистрация |
+| POST | `/api/users/login` | Логин (JWT) |
+| POST | `/api/users/updateInfo` | Обновить профиль |
+| GET | `/api/users/{id}/polls` | Список опросов пользователя |
 
-## Users API
+### Опросы
+| Метод | Эндпоинт | Описание |
+|-------|----------|-----------|
+| POST | `/api/polls/create` | Создать опрос |
+| GET | `/api/polls/all` | Все опросы (с вариантами и голосами) |
+| PUT | `/api/polls/close/poll/{pollId}/owner/{ownerId}` | Закрыть опрос (владелец) |
 
-- **Get user's poll list**
-  - **GET** `/api/users/{id}/polls`
-  - **Description:** Retrieves a list of all polls created by a specific user.
-  - **URL Parameters:**
-    - `id`: The ID of the user.
-  - **Response:** Returns a list of the user's polls.
+### Голосование
+| Метод | Эндпоинт | Описание |
+|-------|----------|-----------|
+| POST | `/api/votes/create?userId={userId}&optionId={optionId}` | Проголосовать |
+| DELETE | `/api/votes/user/{userId}/option/{optionId}/cancelVote` | Отменить голос |
+| GET | `/api/votes/user/{userId}/list` | Список голосов пользователя |
+| GET | `/api/votes/poll/{pollId}/count` | Общее количество голосов в опросе |
+| GET | `/api/votes/poll/{pollId}/options/values` | Голоса по каждому варианту |
 
-- **Register a new user**
-  - **POST** `/api/users/register`
-  - **Description:** Registers a new user.
-  - **Request Body:**
-    ```json
-    {
-      "username": "your_username",
-      "email": "your_email@example.com",
-      "password": "your_password"
-    }
-    ```
-  - **Response:** Returns the created user object.
+### Варианты ответов
+| Метод | Эндпоинт | Описание |
+|-------|----------|-----------|
+| POST | `/api/options/add` | Добавить вариант к опросу |
+| GET | `/api/options/poll/{pollId}` | Список вариантов опроса |
 
-- **Update user information**
-  - **POST** `/api/users/updateInfo`
-  - **Description:** Updates a user's information (username, email, or password).
-  - **Request Body:**
-    ```json
-    {
-      "oldUserName": "current_username",
-      "password": "current_password",
-      "new_username": "new_username",
-      "new_email": "new_email@example.com",
-      "new_password": "new_password"
-    }
-    ```
-  - **Response:** Returns the updated user object.
+---
 
-## Votes API
+## 🔄 Логика голосования
 
-- **Get user's vote list**
-  - **GET** `/api/votes/user/{userId}/list`
-  - **Description:** Retrieves a list of all votes cast by a specific user.
-  - **URL Parameters:**
-    - `userId`: The ID of the user.
-  - **Response:** Returns a list of the user's votes.
+- **Уникальность голоса**: проверяется через таблицу `Vote` (связка `user_id` + `option_id`). Один пользователь не может голосовать дважды за один опрос.
+- **Активность опроса**: если опрос закрыт (по дате или вручную), голосование запрещено.
+- **Результаты**: агрегируются через JPQL запрос с `GROUP BY`.
 
-- **Get option values for a poll**
-  - **GET** `/api/votes/poll/{pollId}/options/values`
-  - **Description:** Retrieves the values of options for a specific poll.
-  - **URL Parameters:**
-    - `pollId`: The ID of the poll.
-  - **Response:** Returns a list of option values.
+---
 
-- **Get vote count for a poll**
-  - **GET** `/api/votes/poll/{pollId}/count`
-  - **Description:** Retrieves the total number of votes for a specific poll.
-  - **URL Parameters:**
-    - `pollId`: The ID of the poll.
-  - **Response:** Returns the total vote count.
+## 🧪 Запуск и тестирование
 
-- **Create a new vote**
-  - **POST** `/api/votes/create`
-  - **Description:** Registers a new vote for a specific poll option.
-  - **Request Parameters:**
-    - `userId`: The ID of the user casting the vote.
-    - `optionId`: The ID of the option to vote for.
-  - **Response:** Returns a success message.
-
-- **Cancel a vote**
-  - **DELETE** `/api/votes/user/{userId}/option/{optionId}/cancelVote`
-  - **Description:** Cancels a user's vote for a specific poll option.
-  - **URL Parameters:**
-    - `userId`: The ID of the user.
-    - `optionId`: The ID of the option.
-  - **Response:** Returns a success message.
-
-## Options API
-
-- **Add a new option to a poll**
-  - **POST** `/api/options/add`
-  - **Description:** Adds a new option to an existing poll.
-  - **Request Body:**
-    ```json
-    {
-      "pollId": 123,
-      "text": "Your option text"
-    }
-    ```
-  - **Response:** Returns a success message.
-
-- **Get all options for a poll**
-  - **GET** `/api/options/poll/{pollId}`
-  - **Description:** Retrieves all options for a specific poll.
-  - **URL Parameters:**
-    - `pollId`: The ID of the poll.
-  - **Response:** Returns a list of poll options.
+### Локальный запуск
+1. Установить PostgreSQL, создать БД `polling_db`.
+2. Настроить `application.properties`:
+   ```properties
+   spring.datasource.url=jdbc:postgresql://localhost:5432/polling_db
+   spring.datasource.username=postgres
+   spring.datasource.password=your_password
+   spring.jpa.hibernate.ddl-auto=update
+   jwt.secret=mySuperSecretKeyForJWT12345!@#$%^&*()
+   jwt.expiration=86400000POST /api/users/register
+{
+    "username": "alex",
+    "email": "alex@example.com",
+    "password": "pass123"
+}POST /api/users/login
+{
+    "username": "alex",
+    "password": "pass123"
+}POST /api/polls/create
+{
+    "question": "Любимый язык программирования?",
+    "usernameCreator": "alex",
+    "validityPeriodDay": 7
+}POST /api/votes/create?userId=1&optionId=1
